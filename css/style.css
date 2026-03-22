@@ -62,3 +62,39 @@ body {
         font-size: 0.5em;
     }
 }
+
+/* Loading overlay */
+.loading-overlay {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    display: none;
+    height: 100vh;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    z-index: 1000;
+}
+
+.loading-spinner {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.loading-spinner .material-symbols-outlined {
+    animation: spin 1s linear infinite;
+    font-size: 4em;
+}
+
+.loading-spinner p {
+    font-size: 1.2em;
+    margin-top: 16px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+}
