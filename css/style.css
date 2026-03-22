@@ -1,0 +1,64 @@
+:root {
+    --color: #374151;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100vh;
+    width: 100vw;
+}
+
+body {
+    align-items: center;
+    color: var(--color);
+    display: flex;
+    font-family: roboto, Sans-Serif;
+    justify-content: center;
+    padding: 32px 48px;
+}
+
+#upload-form {
+    align-items: center;
+    border: 10px dashed var(--color);
+    border-radius: 10px;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    max-height: 500px;
+    max-width: 500px;
+    transition: 0.25s;
+    width: 100%;
+}
+
+#upload-form:hover,
+.dropzone.dz-drag-hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.10);
+}
+
+.dz-preview {
+    display: none;
+    height: 0;
+    position: absolute;
+    top: -500px; /* Hide from sight */
+    width: 0;
+}
+
+.dz-message {
+    font-size: 3em;
+    margin: 0;
+    padding: 0;
+
+    .material-symbols-outlined {
+        font-size: 3em;
+    }
+    
+    small {
+        font-size: 0.5em;
+    }
+}
