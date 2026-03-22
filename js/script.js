@@ -6,6 +6,8 @@ Dropzone.options.uploadForm = {
 
         this.on("sending", function(file, xhr) {
             xhr.responseType = "blob";
+            // Show loading overlay
+            document.getElementById('loading-overlay').style.display = 'flex';
         });
 
         this.on("success", function(file) {
@@ -37,10 +39,15 @@ Dropzone.options.uploadForm = {
             a.remove();
 
             this.removeAllFiles(true);
+            
+            // Hide loading overlay
+            document.getElementById('loading-overlay').style.display = 'none';
         });
 
         this.on("error", function(file, errorMessage) {
             console.error(errorMessage);
+            // Hide loading overlay on error
+            document.getElementById('loading-overlay').style.display = 'none';
         });
     }
 };
