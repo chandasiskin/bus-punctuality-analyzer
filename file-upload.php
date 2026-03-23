@@ -13,8 +13,10 @@ use Shuchkin\SimpleXLSX;
 if (!$_FILES || empty($_FILES)) die('You need to upload a file');
 
 // Extract filename without extension and temporary path
-$filename = substr($_FILES['file']['name'], 0, -5);
+$filename = pathinfo($_FILES['file']['name'], PATHINFO_FILENAME);
 $path = $_FILES['file']['tmp_name'];
+
+
 
 // Include the SimpleXLSX library for parsing XLSX files
 require 'lib/SimpleXLSX.php';
