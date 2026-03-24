@@ -9,6 +9,7 @@ class Analyzer {
         if ($xlsx = SimpleXLSX::parse($filePath)) {
             $outputFile = tempnam(sys_get_temp_dir(), 'csv_') . '.csv';
             $file = fopen($outputFile, 'w+');
+            fwrite($file, chr(0xEF) . chr(0xBB) . chr(0xBF)); // Insert BOM for UTF-8 encoding
 
             $headerWritten = false;
 
