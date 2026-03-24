@@ -11,7 +11,7 @@
     <title>Progresser</title>
     
     <!-- SEO -->
-    <meta name="description" content="Sammanfatta progressrapporter">
+    <meta name="description" content="Bus punctuality analyzer">
     <meta name="author" content="Lauri">
 
     <!-- Favicon -->
@@ -27,6 +27,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Bus punctuality analyzer" />
+    <meta property="og:description" content="Automatically validate and calculate delays in bus trafic." />
+    <meta property="og:image" content="https://ritarisolutions.com/progresser/img/favicon_1200x630.png" />
+    <meta property="og:url" content="https://ritarisolutions.com/progresser" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Bus punctuality analyzer" />
+    <meta name="twitter:description" content="Automatically validate and calculate delays in bus trafic." />
+    <meta name="twitter:image" content="https://ritarisolutions.com/progresser/img/favicon_1200x675.png" />
+    <meta name="twitter:url" content="https://ritarisolutions.com/progresser" />
 </head>
 <body>
     
