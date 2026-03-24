@@ -2,77 +2,83 @@
 
 namespace Chanda\BusPunctualityAnalyzer\Service;
 
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Shuchkin\SimpleXLSX;
 
 class Analyzer {
     public function process(string $filePath): string {
-        $spreadsheet = IOFactory::load($filePath);
-        $sheet = $spreadsheet->getActiveSheet();
+        if ($xlsx = SimpleXLSX::parse($filePath)) {
+            $outputFile = tempnam(sys_get_temp_dir(), 'csv_') . '.csv';
+            $file = fopen($outputFile, 'w+');
 
-        $rows = $sheet->toArray(null, true, true, true);
-        $rows = array_values($rows);
+            $headerWritten = false;
 
-        if (empty($rows)) throw new \Exception('Empty file');
+            foreach ($xlsx->rows() as $rowIndex => $rowData) {
+                $rowData = (array) $rowData;
 
-        $outputSpreadsheet = new Spreadsheet();
-        $outputSheet = $outputSpreadsheet->getActiveSheet();
+                if (empty(array_filter($rowData))) continue;
 
-        $header = array_values($rows[0]);
-        $extraHeaders = [
-            'VMT-PLAN',
-            'SL-PLAN',
-            'VMT-SL DIFF',
-            'TIDIG VMT',
-            'TIDIG SL',
-            'SEN VMT',
-            'SEN SL',
-            '19 SEN VMT',
-            '19 SEN SL'
-        ];
-        $header = array_merge($header, $extraHeaders);
+                if (!$headerWritten) {
+                    $extraHeaders = [
+                        'VMT-PLAN',
+                        'SL-PLAN',
+                        'VMT-SL DIFF',
+                        'TIDIG VMT',
+                        'TIDIG SL',
+                        'SEN VMT',
+                        'SEN SL',
+                        '19 SEN VMT',
+                        '19 SEN SL'
+                    ];
 
-        $outputSheet->fromArray($header, null, 'A1');
+                    $header = array_merge($rowData, $extraHeaders);
 
-        $rowIndex = 2;
+                    fputcsv($file, $header, ';');
 
-        foreach (array_slice($rows, 1) as $row) {
-            $row = array_values($row);
+                    $headerWritten = true;
+                    
+                    continue;
+                }
 
-            $planned = $row[6] ?? null;
-            $vmt = $row[10] ?? null;
-            $sl = $row[13] ?? null;
-            $type = $row[12] ?? '';
-            
-            $plannedSeconds = $this->toSeconds($planned);
-            $vmtSeconds = $this->toSeconds($vmt);
-            $slSeconds = $this->toSeconds($sl);
 
-            $vmtDiff = $this->calculateDiff($plannedSeconds, $vmtSeconds);
-            $slDiff = $this->calculateDiff($plannedSeconds, $slSeconds);
 
-            $extraRow = [
-                $vmtDiff,                                       // 'VMT-PLAN',
-                $slDiff,                                        // 'SL-PLAN',
-                abs($vmtDiff - $slDiff),                        // 'VMT-SL DIFF',
-                $this->isEaryl($type, $vmtDiff) ? 'Ja' : '',    // 'TIDIG VMT',
-                $this->isEaryl($type, $slDiff) ? 'Ja' : '',     // 'TIDIG SL',
-                $this->isLate($type, $vmtDiff) ? 'Ja' : '',     // 'SEN VMT',
-                $this->isLate($type, $slDiff) ? 'Ja' : '',      // 'SEN SL',
-                $this->isVeryLate($vmtDiff) ? 'Ja' : '', // '19 SEN VMT',
-                $this->isVeryLate($slDiff) ? 'Ja' : ''   // '19 SEN SL'
-            ];
-            $row = array_merge($row, $extraRow);
+                $planned = $row[6] ?? null;
+                $vmt = $row[10] ?? null;
+                $sl = $row[13] ?? null;
+                $type = $row[12] ?? '';
+                
+                $plannedSeconds = $this->toSeconds($planned);
+                $vmtSeconds = $this->toSeconds($vmt);
+                $slSeconds = $this->toSeconds($sl);
 
-            $outputSheet->fromArray($row, null, 'A' . $rowIndex);
-            $rowIndex++;
+                $vmtDiff = $this->calculateDiff($plannedSeconds, $vmtSeconds);
+                $slDiff = $this->calculateDiff($plannedSeconds, $slSeconds);
+
+                $extraRow = [
+                    $vmtDiff,                                       // 'VMT-PLAN',
+                    $slDiff,                                        // 'SL-PLAN',
+                    abs($vmtDiff - $slDiff),                        // 'VMT-SL DIFF',
+                    $this->isEarly($type, $vmtDiff) ? 'Ja' : '',    // 'TIDIG VMT',
+                    $this->isEarly($type, $slDiff) ? 'Ja' : '',     // 'TIDIG SL',
+                    $this->isLate($type, $vmtDiff) ? 'Ja' : '',     // 'SEN VMT',
+                    $this->isLate($type, $slDiff) ? 'Ja' : '',      // 'SEN SL',
+                    $this->isVeryLate($vmtDiff) ? 'Ja' : '',        // '19 SEN VMT',
+                    $this->isVeryLate($slDiff) ? 'Ja' : ''          // '19 SEN SL'
+                ];
+
+                $rowData = array_merge($rowData, $extraRow);
+
+                fputcsv($file, $rowData, ';');
+            }
+
+            fclose($file);
+
+            return $outputFile;
+        } else {
+            throw new \Exception('Failed to read the excel-file');
         }
-
-        return $this->writeExcel($outputSpreadsheet);
     }
 
-    private function toSeconds($time) {
+    private function toSeconds($time): ?int {
         if (!$time) return null;
 
         $ts = strtotime($time);
@@ -80,7 +86,7 @@ class Analyzer {
         return $ts !== false ? $ts % (24 * 60 * 60) : null;
     }
 
-    private function calculateDiff($planned, $actual) {
+    private function calculateDiff($planned, $actual): ?int {
         if ($planned === null || $actual === null) return null;
 
         $wholeDay = 24 * 60 * 60;
@@ -93,7 +99,7 @@ class Analyzer {
         return $diff - $halfDay;
     }
 
-    private function isEaryl(string $type, ?int $diff): bool {
+    private function isEarly(string $type, ?int $diff): bool {
         if ($type === 'Arrival') return $diff > 300;
         if ($type === 'Departure' || $type === 'Passage') return $diff > 60;
 
@@ -109,14 +115,5 @@ class Analyzer {
 
     private function isVeryLate(?int $diff): bool {
         return $diff !== null && $diff <= -19 * 60;
-    }
-
-    private function writeExcel(Spreadsheet $spreadsheet): string {
-        $file = tempnam(sys_get_temp_dir(), 'xlsx_') . '.xslx';
-
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($file);
-
-        return $file;
     }
 }
