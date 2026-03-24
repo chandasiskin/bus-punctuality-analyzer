@@ -14,14 +14,13 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Chanda\BusPunctualityAnalyzer\Service\Analyzer;
 
-// if (!isset($_FILES['file'])) {
-//     http_response_code(400);
-//     exit('No file uploaded');
-// }
+if (!isset($_FILES['file'])) {
+    http_response_code(400);
+    exit('No file uploaded');
+}
 
-// $tmpPath = $_FILES['file']['tmp_name'];
-// $originalName = pathinfo($_FILES['file']['name'], PATHINFO_FILENAME);
-$tmpPath='../Block Details.xlsx';$originalName='Block Details';
+$tmpPath = $_FILES['file']['tmp_name'];
+$originalName = pathinfo($_FILES['file']['name'], PATHINFO_FILENAME);
 
 $analyzer = new Analyzer();
 $outputFile = $analyzer->process($tmpPath);

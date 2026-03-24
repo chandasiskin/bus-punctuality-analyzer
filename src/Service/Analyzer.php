@@ -13,7 +13,7 @@ class Analyzer {
 
             $headerWritten = false;
 
-            foreach ($xlsx->rows() as $rowIndex => $rowData) {
+            foreach ($xlsx->rows() as $rowData) {
                 $rowData = (array) $rowData;
 
                 if (empty(array_filter($rowData))) continue;
@@ -42,10 +42,10 @@ class Analyzer {
 
 
 
-                $planned = $row[6] ?? null;
-                $vmt = $row[10] ?? null;
-                $sl = $row[13] ?? null;
-                $type = $row[12] ?? '';
+                $planned = $rowData[6] ?? null;
+                $vmt = $rowData[10] ?? null;
+                $sl = $rowData[13] ?? null;
+                $type = $rowData[12] ?? '';
                 
                 $plannedSeconds = $this->toSeconds($planned);
                 $vmtSeconds = $this->toSeconds($vmt);
@@ -65,6 +65,11 @@ class Analyzer {
                     $this->isVeryLate($vmtDiff) ? 'Ja' : '',        // '19 SEN VMT',
                     $this->isVeryLate($slDiff) ? 'Ja' : ''          // '19 SEN SL'
                 ];
+
+                $rowData[1] = date('Y-m-d', strtotime($rowData[1]));
+                $rowData[6] = date('H:i:s', strtotime($rowData[6]));
+                $rowData[10] = date('H:i:s', strtotime($rowData[10]));
+                $rowData[13] = date('H:i:s', strtotime($rowData[13]));
 
                 $rowData = array_merge($rowData, $extraRow);
 
