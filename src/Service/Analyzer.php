@@ -53,11 +53,12 @@ class Analyzer {
 
                 $vmtDiff = $this->calculateDiff($plannedSeconds, $vmtSeconds);
                 $slDiff = $this->calculateDiff($plannedSeconds, $slSeconds);
+                $vmtSlDiff = $vmtDiff !== null && $slDiff !== null ? abs($vmtDiff - $slDiff) : '';
 
                 $extraRow = [
                     $vmtDiff,                                       // 'VMT-PLAN',
                     $slDiff,                                        // 'SL-PLAN',
-                    abs($vmtDiff - $slDiff),                        // 'VMT-SL DIFF',
+                    $vmtSlDiff,                                     // 'VMT-SL DIFF',
                     $this->isEarly($type, $vmtDiff) ? 'Ja' : '',    // 'TIDIG VMT',
                     $this->isEarly($type, $slDiff) ? 'Ja' : '',     // 'TIDIG SL',
                     $this->isLate($type, $vmtDiff) ? 'Ja' : '',     // 'SEN VMT',
