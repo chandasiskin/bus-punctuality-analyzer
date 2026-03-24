@@ -42,10 +42,10 @@ class Analyzer {
 
 
 
-                $planned = $rowData[6] ?? null;
-                $vmt = $rowData[10] ?? null;
-                $sl = $rowData[13] ?? null;
-                $type = $rowData[12] ?? '';
+                $planned = $rowData[6];
+                $vmt = $rowData[10];
+                $sl = $rowData[13];
+                $type = $rowData[12];
                 
                 $plannedSeconds = $this->toSeconds($planned);
                 $vmtSeconds = $this->toSeconds($vmt);
@@ -68,8 +68,8 @@ class Analyzer {
 
                 $rowData[1] = date('Y-m-d', strtotime($rowData[1]));
                 $rowData[6] = date('H:i:s', strtotime($rowData[6]));
-                $rowData[10] = date('H:i:s', strtotime($rowData[10]));
-                $rowData[13] = date('H:i:s', strtotime($rowData[13]));
+                $rowData[10] = $vmt !== '' ? date('H:i:s', strtotime($rowData[10])) : '';
+                $rowData[13] = $sl !== '' ? date('H:i:s', strtotime($rowData[13])) : '';
 
                 $rowData = array_merge($rowData, $extraRow);
 
