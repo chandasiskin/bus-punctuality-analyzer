@@ -1,0 +1,18 @@
+{
+    "name": "chanda/bus-punctuality-analyzer",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Chanda\\BusPunctualityAnalyzer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Chanda Siskin"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^5.5"
+    }
+}

@@ -1,21 +1,23 @@
 # Composer
 /vendor/
+/composer.lock
 
-# Environment
+# Environment files
 .env
+.env.local
 
-# Uploads & generated files
-uploads/
-exports/
-output/
-tmp/
-
-# Logs
-*.log
-
-# VS Code
-.vscode/
-
-# OS junk
+# OS files
 .DS_Store
 Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Logs / temporary files
+*.log
+*.tmp
+*.temp
+
+# Misc
+*.cache
